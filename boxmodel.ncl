@@ -84,12 +84,12 @@ begin
 
   if (isatt(boxres,"skip_tmYLLabel")) then
      if (boxres@skip_tmYLLabel) then
-       res@tmYLLabelFontHeightF = 0.005
+       res@tmYLLabelFontHeightF = 0
      end if
   end if
   if (isatt(boxres,"skip_tmXBLabel")) then
      if (boxres@skip_tmXBLabel) then
-       res@tmXBLabelFontHeightF = 0.005
+       res@tmXBLabelFontHeightF = 0
      end if
   end if
 
