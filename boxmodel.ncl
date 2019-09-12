@@ -121,4 +121,12 @@ begin
 end
 
      
-
+;----------------
+;0->a, 1->b...
+undef (abc)
+function abc(idx)
+begin
+ alphabet="abcdefghijklmnopqrstuvwxyz"
+ r="("+str_get_cols(alphabet,idx,idx)+")"
+ return r
+end
