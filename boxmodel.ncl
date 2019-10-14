@@ -20,7 +20,7 @@ begin
                       ;boxScale<1. is recommended for smaller subplots
                       ;boxScale also affect the Left, right middle string
 
- res@tmInward = True ; inward tickmarks 
+ res@tmInward = False ; inward tickmarks 
  return res
 end
 
@@ -89,8 +89,9 @@ begin
 
   ;Set tickmark resources
   res@tmEqualizeXYSizes = True ; propagate tm to all axis
-  res@tmXBMajorLengthF = 0.02*boxres@boxScale
-  res@tmXBMinorLengthF = 0.01*boxres@boxScale
+  res@tmXBLabelFontHeightF=0.018*boxres@boxScale
+  res@tmXBMajorLengthF = 0.018*boxres@boxScale
+  res@tmXBMinorLengthF = 0.008*boxres@boxScale
   if (boxres@tmInward)
     res@tmXBMajorOutwardLengthF = -res@tmXBMajorLengthF-0.01
     res@tmXBMinorOutwardLengthF = -res@tmXBMinorLengthF-0.01 
@@ -132,3 +133,25 @@ begin
  r="("+str_get_cols(alphabet,idx,idx)+")"
  return r
 end
+
+;---trim off color map in away the color is still symmetric for asymmetric contour levels
+;cmapName is the input colormap,
+;nneg,nnpos is the number of contour labels in negative & positive region
+undef ("symm_colorpallete")
+function symm_colorpallete(cmapName,nneg,npos)
+begin
+    bwr_cmap = read_colormap_file(cmapName)
+    dims=dimsizes(bwr_cmap)
+    mcols=dims(0)
+    mcol2=tointeger(mcols/2)
+    ncols=nneg+npos+1
+    if (nneg.lt.npos)
+       icut=mcol2 - tointeger(mcol2*nneg/npos) -1 
+       cmap=bwr_cmap(icut:,:)
+    else
+       icut=mcol2 + tointeger(mcol2*npos/nneg) - 1 
+    end if
+return cmap
+end
+
+
