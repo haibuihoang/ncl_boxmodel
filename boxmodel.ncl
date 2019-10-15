@@ -146,12 +146,31 @@ begin
     mcol2=tointeger(mcols/2)
     ncols=nneg+npos+1
     if (nneg.lt.npos)
-       icut=mcol2 - tointeger(mcol2*nneg/npos) -1 
+       icut=mcol2 - tointeger(mcol2*nneg/npos) 
        cmap=bwr_cmap(icut:,:)
+       print(icut+":")
     else
-       icut=mcol2 + tointeger(mcol2*npos/nneg) - 1 
+       icut=mcol2 + tointeger(mcol2*npos/nneg)  
+       cmap=bwr_cmap(:icut,:)
+       print(":"+icut)
     end if
 return cmap
+end
+
+;--manually get cnFillColors from colorpallete and number of Colors
+undef ("get_cnFillColors")
+function get_cnFillColors(cmap,nCols)
+local cmap,dims,i,im
+begin
+  dims=dimsizes(cmap)
+  mCols=dims(0)
+  cols=new((/nCols,4/),"float")
+  cols=1
+  do i=0,nCols-1
+    im = tointeger(i*(mCols-1)/(nCols-1))
+    cols(i,:) = cmap(im,:)
+  end do
+return cols
 end
 
 
