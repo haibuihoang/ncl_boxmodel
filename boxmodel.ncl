@@ -139,19 +139,20 @@ end
 ;nneg,nnpos is the number of contour labels in negative & positive region
 undef ("symm_colorpallete")
 function symm_colorpallete(cmapName,nneg,npos)
+local cmap, cmapin,dims, icut
 begin
-    bwr_cmap = read_colormap_file(cmapName)
-    dims=dimsizes(bwr_cmap)
+    cmapin = read_colormap_file(cmapName)
+    dims=dimsizes(cmapin)
     mcols=dims(0)
     mcol2=tointeger(mcols/2)
     ncols=nneg+npos+1
     if (nneg.lt.npos)
        icut=mcol2 - tointeger(mcol2*nneg/npos) 
-       cmap=bwr_cmap(icut:,:)
+       cmap=cmapin(icut:,:)
        print(icut+":")
     else
        icut=mcol2 + tointeger(mcol2*npos/nneg)  
-       cmap=bwr_cmap(:icut,:)
+       cmap=cmapin(:icut,:)
        print(":"+icut)
     end if
 return cmap
@@ -160,12 +161,11 @@ end
 ;--manually get cnFillColors from colorpallete and number of Colors
 undef ("get_cnFillColors")
 function get_cnFillColors(cmap,nCols)
-local cmap,dims,i,im
+local cmap,dims,i,im,cols
 begin
   dims=dimsizes(cmap)
   mCols=dims(0)
   cols=new((/nCols,4/),"float")
-  cols=1
   do i=0,nCols-1
     im = tointeger(i*(mCols-1)/(nCols-1))
     cols(i,:) = cmap(im,:)
