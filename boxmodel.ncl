@@ -37,6 +37,18 @@ begin
   return 1
 end
 
+;----Some toher utils
+; Draw Unit on the right label bar 
+undef("lbTitleR")
+procedure lbTitleR(wks,boxres,title,fontsize,offsetX,offsetY)
+begin
+  x = boxres@xRight - boxres@margin_right + offsetX
+  y = boxres@yTop - boxres@margin_top + offsetY
+  res=True
+  res@txFontHeightF=fontsize
+  res@txJust = "bottomcenter"
+  gsn_text_ndc(wks,title,x,y,res)
+end
 ;------------------
 ;Return the box pointer to the next row
 undef("returnbox")
