@@ -21,6 +21,7 @@ begin
                       ;boxScale also affect the Left, right middle string
 
  res@tmInward = False ; inward tickmarks 
+ res@direction= "l2r" ; "l2r" or "t2b"
  return res
 end
 
@@ -37,18 +38,6 @@ begin
   return 1
 end
 
-;----Some toher utils
-; Draw Unit on the right label bar 
-undef("lbTitleR")
-procedure lbTitleR(wks,boxres,title,fontsize,offsetX,offsetY)
-begin
-  x = boxres@xRight - boxres@margin_right + offsetX
-  y = boxres@yTop - boxres@margin_top + offsetY
-  res=True
-  res@txFontHeightF=fontsize
-  res@txJust = "bottomcenter"
-  gsn_text_ndc(wks,title,x,y,res)
-end
 ;------------------
 ;Return the box pointer to the next row
 undef("returnbox")
@@ -67,29 +56,46 @@ begin
   bbwidth=width + boxres@margin_left +  boxres@margin_right
   bbheight=height + boxres@margin_top +  boxres@margin_bottom
 
-  left = boxres@xRight
-  right = left + bbwidth
-  top = boxres@yTop
-  bottom = top - bbheight 
+  if (boxres@direction.eq."l2r") ;-----left to right
+   left = boxres@xRight
+   right = left + bbwidth
+   top = boxres@yTop
+   bottom = top - bbheight 
 
-  if (right.gt.1) then   ;over flow
+   if (right.gt.1) then   ;over flow
      left=0.
      right = left + bbwidth
      top = boxres@yMin
      bottom = top - bbheight
-  end if  
-
-
-  if (bottom.lt.boxres@yMin) then
+   end if  
+   if (bottom.lt.boxres@yMin) then
      boxres@yMin = bottom
+   end if
+   ;Save the current coordinate
+   boxres@xRight=right
+   boxres@xLeft=left
+   boxres@yTop = top
+   boxres@yBottom = bottom
+  else ;-----top to bottom
+   top = boxres@yBottom
+   bottom = top - bbheight
+   left = boxres@xLeft
+   right = left + bbwidth
+   if (bottom.lt.0) 
+     top = 1
+     bottom = top - bbheight
+     left = boxres@xMax
+     right = left + bbwidth
+   end if
+   if (right.gt.boxres@xMax) then
+     boxres@xMax = right
+   end if
+   ;Save the current coordinate
+   boxres@xRight=right
+   boxres@xLeft=left
+   boxres@yTop = top
+   boxres@yBottom = bottom
   end if
- 
- 
-  ;Save the current coordinate
-  boxres@xRight=right
-  boxres@xLeft=left
-  boxres@yTop = top
-  boxres@yBottom = bottom
 
   ;Return the res for drawing chart
   res=True
@@ -102,10 +108,10 @@ begin
   ;Set tickmark resources
   res@tmEqualizeXYSizes = True ; propagate tm to all axis
   res@tmXBLabelFontHeightF=0.018*boxres@boxScale
-  res@tmXBMajorLengthF = 0.018*boxres@boxScale
+  res@tmXBMajorLengthF = 0.016*boxres@boxScale
   res@tmXBMinorLengthF = 0.008*boxres@boxScale
   if (boxres@tmInward)
-    res@tmXBMajorOutwardLengthF = -res@tmXBMajorLengthF-0.01
+    res@tmXBMajorOutwardLengthF = -res@tmXBMajorLengthF-0.015
     res@tmXBMinorOutwardLengthF = -res@tmXBMinorLengthF-0.01 
   else
     res@tmXBMajorOutwardLengthF = res@tmXBMajorLengthF+0.005
@@ -185,4 +191,15 @@ begin
 return cols
 end
 
-
+;----Some toher utils
+; Draw Unit on the right label bar 
+undef("lbTitleR")
+procedure lbTitleR(wks,boxres,title,fontsize,offsetX,offsetY)
+begin
+  x = boxres@xRight - boxres@margin_right + offsetX
+  y = boxres@yTop - boxres@margin_top + offsetY
+  res=True
+  res@txFontHeightF=fontsize
+  res@txJust = "bottomcenter"
+  gsn_text_ndc(wks,title,x,y,res)
+end
